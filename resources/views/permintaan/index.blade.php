@@ -41,44 +41,57 @@
                     <table class="table table-bordered table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>No. Permintaan</th>
+                                <th>No</th>
                                 <th>Judul</th>
-                                <th>Pemohon</th>
-                                <th>Tanggal</th>
-                                <th>Total Estimasi</th>
                                 <th>Status</th>
+                                <th>Total Estimasi</th>
+                                <th>Tanggal</th>
+                                <th>Status Progress</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($permintaans as $permintaan)
-                            <tr>
-                                <td>{{ $permintaan->nomor_permintaan }}</td>
-                                <td>{{ $permintaan->judul_permintaan }}</td>
-                                <td>{{ $permintaan->user->nama ?? '-' }}</td>
-                                <td>{{ $permintaan->tanggal_permintaan ? $permintaan->tanggal_permintaan->format('d/m/Y') : '-' }}</td>
-                                <td>Rp {{ number_format($permintaan->total_estimasi, 0, ',', '.') }}</td>
-                                <td>
-                                    @switch($permintaan->status)
-                                        @case('menunggu_persetujuan')
-                                            <span class="badge bg-warning">Menunggu Persetujuan</span>
-                                            @break
-                                        @case('disetujui')
-                                            <span class="badge bg-success">Disetujui</span>
-                                            @break
-                                        @case('ditolak')
-                                            <span class="badge bg-danger">Ditolak</span>
-                                            @break
-                                        @default
-                                            <span class="badge bg-secondary">{{ $permintaan->status }}</span>
-                                    @endswitch
-                                </td>
-
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="text-center">Tidak ada data permintaan</td>
-                            </tr>
-                            @endforelse
+                            @foreach($permintaans as $permintaan)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $permintaan->judul_permintaan }}</td>
+                                    <td>
+                                        @switch($permintaan->status)
+                                            @case('menunggu_persetujuan')
+                                                <span class="badge bg-warning">Menunggu Persetujuan</span>
+                                                @break
+                                            @case('disetujui')
+                                                <span class="badge bg-success">Disetujui</span>
+                                                @break
+                                            @case('ditolak')
+                                                <span class="badge bg-danger">Ditolak</span>
+                                                @break
+                                            @default
+                                                <span class="badge bg-secondary">{{ $permintaan->status }}</span>
+                                        @endswitch
+                                    </td>
+                                    <td>Rp {{ number_format($permintaan->total_estimasi, 0, ',', '.') }}</td>
+                                    <td>{{ $permintaan->tanggal_permintaan ? $permintaan->tanggal_permintaan->format('d/m/Y H:i') : '-' }}</td>
+                                    <td>
+                                        @if($permintaan->status_progress === 'dalam_proses')
+                                            <span class="badge bg-warning">Dalam Proses</span>
+                                        @else
+                                            <span class="badge bg-success">Selesai</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('permintaan.show', $permintaan) }}" class="btn btn-sm btn-info">Detail</a>
+                                        @if($permintaan->status === 'menunggu_persetujuan' && auth()->id() === $permintaan->user_id)
+                                            <a href="{{ route('permintaan.edit', $permintaan) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <form action="{{ route('permintaan.destroy', $permintaan) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus permintaan?')">Hapus</button>
+                                            </form>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

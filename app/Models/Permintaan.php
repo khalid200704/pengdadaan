@@ -18,11 +18,12 @@ class Permintaan extends Model
         'deskripsi',
         'total_estimasi',
         'status',
+        'status_progress',
         'keterangan',
         'catatan_approver',
         'approved_by',
         'approved_at',
-        'tanggal_permintaan'
+        'tanggal_permintaan',
     ];
 
     protected $casts = [
@@ -70,6 +71,10 @@ class Permintaan extends Model
         return $this->hasOne(Persetujuan::class);
     }
 
+    public function progressUpdates()
+    {
+        return $this->hasMany(ProgressUpdate::class);
+    }
 
 
     public function scopePending($query)

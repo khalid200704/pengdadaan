@@ -76,8 +76,13 @@ class LaporanPengadaanController extends Controller
 
     public function show($id)
     {
-        // Logic untuk menampilkan laporan detail
-        return view('laporan-pengadaan.show');
+        // Ambil data persetujuan beserta relasi permintaan, user, diterimaOleh, dan progress updates
+        $laporanPengadaan = \App\Models\Persetujuan::with([
+            'permintaan.user',
+            'permintaan.progressUpdates.user',
+            'disetujuiOleh',
+        ])->findOrFail($id);
+        return view('laporan-pengadaan.show', compact('laporanPengadaan'));
     }
 
     public function edit($id)

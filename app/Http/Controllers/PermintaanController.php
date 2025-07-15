@@ -120,6 +120,59 @@ class PermintaanController extends Controller
         return redirect()->route('permintaan.index')->with('success', 'Permintaan berhasil diperbarui');
     }
 
+    public function addProgressUpdate(Request $request, Permintaan $permintaan)
+    {
+        // Hanya user yang membuat permintaan & status sudah disetujui
+        if (
+            auth()->id() !== $permintaan->user_id ||
+            $permintaan->status !== 'disetujui' ||
+            $permintaan->status_progress === 'selesai'
+        ) {
+            abort(403, 'Anda tidak berhak menambah progress update untuk permintaan ini.');
+        }
+
+        $request->validate([
+            'deskripsi_progress' => 'required|string|max:1000',
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048'
+        ]);
+
+        $filePath = null;
+        $fileName = null;
+        $fileType = null;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileType = $file->getClientOriginalExtension();
+            $filePath = $file->store('progress-files', 'public');
+        }
+
+        $permintaan->progressUpdates()->create([
+            'user_id' => auth()->id(),
+            'deskripsi_progress' => $request->deskripsi_progress,
+            'file_path' => $filePath,
+            'file_name' => $fileName,
+            'file_type' => $fileType,
+        ]);
+
+        return redirect()->back()->with('success', 'Progress update berhasil ditambahkan!');
+    }
+
+    public function completeProgress(Permintaan $permintaan)
+    {
+        // Hanya user yang membuat permintaan & status sudah disetujui
+        if (
+            auth()->id() !== $permintaan->user_id ||
+            $permintaan->status !== 'disetujui'
+        ) {
+            abort(403, 'Anda tidak berhak menyelesaikan permintaan ini.');
+        }
+
+        $permintaan->update(['status_progress' => 'selesai']);
+
+        return redirect()->back()->with('success', 'Permintaan telah diselesaikan!');
+    }
+
     public function destroy(Permintaan $permintaan)
     {
         // Cek apakah user adalah pemilik permintaan atau admin/division head

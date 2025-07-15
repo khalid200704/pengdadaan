@@ -173,6 +173,49 @@
                                             {{ $item->permintaan->deskripsi ?? '-' }}
                                         </div>
                                     </div>
+
+                                    {{-- Status Progress --}}
+                                    @if($item->permintaan)
+                                    <div class="mt-4">
+                                        <h6>Status Progress:</h6>
+                                        <p class="text-muted mb-1">
+                                            @if($item->permintaan->status_progress === 'dalam_proses')
+                                                <span class="badge bg-warning">Dalam Proses</span>
+                                            @else
+                                                <span class="badge bg-success">Selesai</span>
+                                            @endif
+                                        </p>
+                                    </div>
+                                    @endif
+
+                                    {{-- Riwayat Progress Updates --}}
+                                    @if($item->permintaan && $item->permintaan->progressUpdates->count() > 0)
+                                    <div class="mt-4">
+                                        <h6>Riwayat Progress Updates:</h6>
+                                        <div class="timeline">
+                                            @foreach($item->permintaan->progressUpdates->sortByDesc('created_at') as $update)
+                                            <div class="card mb-2">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <strong>{{ $update->user->nama }}</strong>
+                                                            <small class="text-muted d-block">{{ $update->created_at->format('d/m/Y H:i') }}</small>
+                                                        </div>
+                                                    </div>
+                                                    <p class="mt-2 mb-1">{{ $update->deskripsi_progress }}</p>
+                                                    @if($update->file_path)
+                                                    <div class="mt-2">
+                                                        <a href="{{ Storage::url($update->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-file-earmark me-1"></i>{{ $update->file_name }}
+                                                        </a>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>

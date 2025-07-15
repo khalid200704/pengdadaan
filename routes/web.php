@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
     // Resource CRUD routes - Admin and Division Head only
     Route::resource('users', UserController::class)->middleware(['admin_or_division_head']);
     Route::resource('permintaan', PermintaanController::class);
+    Route::post('/permintaan/{permintaan}/progress', [PermintaanController::class, 'addProgressUpdate'])->name('permintaan.addProgressUpdate');
+    Route::patch('/permintaan/{permintaan}/complete', [PermintaanController::class, 'completeProgress'])->name('permintaan.completeProgress');
     Route::resource('persetujuan', PersetujuanController::class);
     Route::resource('laporan-pengadaan', LaporanPengadaanController::class);
     Route::resource('saldos', SaldoController::class);

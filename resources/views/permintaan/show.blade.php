@@ -96,6 +96,75 @@
                                     <p class="text-muted">{{ $permintaan->keterangan }}</p>
                                 </div>
                                 @endif
+
+                                <div class="mt-4">
+                                    <h6>Status Progress:</h6>
+                                    <p class="text-muted mb-1">
+                                        @if($permintaan->status_progress === 'dalam_proses')
+                                            <span class="badge bg-warning">Dalam Proses</span>
+                                        @else
+                                            <span class="badge bg-success">Selesai</span>
+                                        @endif
+                                    </p>
+                                    
+                                    @if(auth()->id() === $permintaan->user_id && $permintaan->status === 'disetujui' && $permintaan->status_progress === 'dalam_proses')
+                                        <div class="mt-3">
+                                            <h6>Tambah Progress Update:</h6>
+                                            <form action="{{ route('permintaan.addProgressUpdate', $permintaan) }}" method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="mb-3">
+                                                    <label for="deskripsi_progress" class="form-label">Deskripsi Progress:</label>
+                                                    <textarea name="deskripsi_progress" id="deskripsi_progress" class="form-control" rows="3" required placeholder="Jelaskan apa yang sudah dikerjakan..."></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="file" class="form-label">Upload File (Opsional):</label>
+                                                    <input type="file" name="file" id="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                                    <small class="text-muted">Format: PDF, JPG, PNG, DOC, DOCX (Max: 2MB)</small>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Tambah Progress</button>
+                                            </form>
+                                        </div>
+                                        
+                                        <div class="mt-3">
+                                            <form action="{{ route('permintaan.completeProgress', $permintaan) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-success" onclick="return confirm('Yakin ingin menyelesaikan permintaan ini?')">
+                                                    <i class="bi bi-check-circle me-1"></i>Selesai
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Riwayat Progress Updates -->
+                                @if($permintaan->progressUpdates->count() > 0)
+                                <div class="mt-4">
+                                    <h6>Riwayat Progress Updates:</h6>
+                                    <div class="timeline">
+                                        @foreach($permintaan->progressUpdates->sortByDesc('created_at') as $update)
+                                        <div class="card mb-2">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <strong>{{ $update->user->nama }}</strong>
+                                                        <small class="text-muted d-block">{{ $update->created_at->format('d/m/Y H:i') }}</small>
+                                                    </div>
+                                                </div>
+                                                <p class="mt-2 mb-1">{{ $update->deskripsi_progress }}</p>
+                                                @if($update->file_path)
+                                                <div class="mt-2">
+                                                    <a href="{{ Storage::url($update->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-file-earmark me-1"></i>{{ $update->file_name }}
+                                                    </a>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>
