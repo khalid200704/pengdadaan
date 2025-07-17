@@ -37,7 +37,50 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="total_estimasi" class="form-label">Total Estimasi (Rp) *</label>
-                                        <input type="number" name="total_estimasi" id="total_estimasi" class="form-control" value="{{ old('total_estimasi') }}" min="0" step="0.01" required>
+                                        <input type="number" name="total_estimasi" id="total_estimasi" class="form-control" value="{{ old('total_estimasi') }}" min="0" max="1000000000000000" step="0.01" required>
+                                        <small id="total_estimasi_text" class="text-muted"></small>
+                                        <script>
+                                        function formatRupiah(angka) {
+                                            if (!angka) return '';
+                                            let number_string = angka.replace(/[^\d]/g, ''),
+                                                sisa = number_string.length % 3,
+                                                rupiah = number_string.substr(0, sisa),
+                                                ribuan = number_string.substr(sisa).match(/\d{3}/g);
+                                            if (ribuan) {
+                                                rupiah += (sisa ? '.' : '') + ribuan.join('.');
+                                            }
+                                            return rupiah ? 'Rp ' + rupiah : '';
+                                        }
+                                        function terbilang(nilai) {
+                                            var satuan = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+                                            nilai = parseInt(nilai, 10);
+                                            if (isNaN(nilai) || nilai === 0) return "";
+                                            if (nilai < 12) return satuan[nilai];
+                                            if (nilai < 20) return terbilang(nilai - 10) + " belas";
+                                            if (nilai < 100) return terbilang(Math.floor(nilai / 10)) + " puluh " + terbilang(nilai % 10);
+                                            if (nilai < 200) return "seratus " + terbilang(nilai - 100);
+                                            if (nilai < 1000) return terbilang(Math.floor(nilai / 100)) + " ratus " + terbilang(nilai % 100);
+                                            if (nilai < 2000) return "seribu " + terbilang(nilai - 1000);
+                                            if (nilai < 1000000) return terbilang(Math.floor(nilai / 1000)) + " ribu " + terbilang(nilai % 1000);
+                                            if (nilai < 1000000000) return terbilang(Math.floor(nilai / 1000000)) + " juta " + terbilang(nilai % 1000000);
+                                            if (nilai < 1000000000000) return terbilang(Math.floor(nilai / 1000000000)) + " milyar " + terbilang(nilai % 1000000000);
+                                            if (nilai < 1000000000000000) return terbilang(Math.floor(nilai / 1000000000000)) + " triliun " + terbilang(nilai % 1000000000000);
+                                            if (nilai < 1000000000000000000) return terbilang(Math.floor(nilai / 1000000000000000)) + " kuadriliun " + terbilang(nilai % 1000000000000000);
+                                            return "";
+                                        }
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const input = document.getElementById('total_estimasi');
+                                            const text = document.getElementById('total_estimasi_text');
+                                            if(input && text) {
+                                                input.addEventListener('input', function() {
+                                                    let angka = this.value;
+                                                    let terbilangText = terbilang(angka);
+                                                    text.textContent = terbilangText ? (terbilangText.trim() + ' rupiah') : '';
+                                                });
+                                                if(input.value) text.textContent = terbilang(input.value).trim() + ' rupiah';
+                                            }
+                                        });
+                                        </script>
                                     </div>
                                     <div class="mb-3">
                                         <label for="keterangan" class="form-label">Keterangan</label>
@@ -56,4 +99,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

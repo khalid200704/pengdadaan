@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('budgets', function (Blueprint $table) {
             $table->id();
             $table->string('nama_budget');
-            $table->decimal('total_budget', 15, 2);
-            $table->decimal('terpakai', 15, 2)->default(0);
-            $table->decimal('tersisa', 15, 2);
+            $table->decimal('total_budget', 20, 2);
+            $table->decimal('terpakai', 20, 2)->default(0);
+            $table->decimal('tersisa', 20, 2);
             $table->string('tahun');
             $table->text('keterangan')->nullable();
             $table->timestamps();

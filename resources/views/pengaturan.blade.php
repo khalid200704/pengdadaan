@@ -120,9 +120,9 @@
                                 <div class="mb-3">
                                     <label class="form-label">Tahun Anggaran Aktif:</label>
                                     <select class="form-select" id="tahunAnggaran">
-                                        <option value="2024" {{ date('Y') == 2024 ? 'selected' : '' }}>2024</option>
-                                        <option value="2025" {{ date('Y') == 2025 ? 'selected' : '' }}>2025</option>
-                                        <option value="2026" {{ date('Y') == 2026 ? 'selected' : '' }}>2026</option>
+                                        @for($year = date('Y'); $year <= date('Y') + 5; $year++)
+                                            <option value="{{ $year }}" {{ date('Y') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                        @endfor
                                     </select>
                                 </div>
                                 <div class="mb-3">

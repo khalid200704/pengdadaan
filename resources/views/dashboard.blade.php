@@ -11,7 +11,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <span class="text-muted">{{ date('d F Y') }}</span>
-                    <span class="rounded-circle bg-secondary" style="width:40px; height:40px; display:inline-block;"></span>
+                    <img src="{{ asset('logo.png') }}" alt="Logo" style="width:40px; height:40px; object-fit:cover; border-radius:50%; display:inline-block;">
                 </div>
             </div>
 

@@ -55,7 +55,7 @@
                                         <label for="tahun" class="form-label fw-semibold">Tahun <span class="text-danger">*</span></label>
                                         <select name="tahun" id="tahun" class="form-select @error('tahun') is-invalid @enderror" required>
                                             <option value="">Pilih Tahun</option>
-                                            @for($year = date('Y'); $year >= 2020; $year--)
+                                            @for($year = date('Y'); $year <= date('Y') + 5; $year++)
                                                 <option value="{{ $year }}" {{ old('tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
                                             @endfor
                                         </select>
@@ -69,10 +69,41 @@
                                         <div class="input-group">
                                             <span class="input-group-text">Rp</span>
                                             <input type="number" name="total_budget" id="total_budget" 
-                                                   value="{{ old('total_budget') }}" step="1000" min="0"
+                                                   value="{{ old('total_budget') }}" step="1000" min="0" max="1000000000000000"
                                                    class="form-control @error('total_budget') is-invalid @enderror" 
                                                    placeholder="0" required>
                                         </div>
+                                        <small id="total_budget_text" class="text-muted"></small>
+                                        <script>
+                                        function terbilang(nilai) {
+                                            var satuan = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+                                            nilai = parseInt(nilai, 10);
+                                            if (isNaN(nilai) || nilai === 0) return "";
+                                            if (nilai < 12) return satuan[nilai];
+                                            if (nilai < 20) return terbilang(nilai - 10) + " belas";
+                                            if (nilai < 100) return terbilang(Math.floor(nilai / 10)) + " puluh " + terbilang(nilai % 10);
+                                            if (nilai < 200) return "seratus " + terbilang(nilai - 100);
+                                            if (nilai < 1000) return terbilang(Math.floor(nilai / 100)) + " ratus " + terbilang(nilai % 100);
+                                            if (nilai < 2000) return "seribu " + terbilang(nilai - 1000);
+                                            if (nilai < 1000000) return terbilang(Math.floor(nilai / 1000)) + " ribu " + terbilang(nilai % 1000);
+                                            if (nilai < 1000000000) return terbilang(Math.floor(nilai / 1000000)) + " juta " + terbilang(nilai % 1000000);
+                                            if (nilai < 1000000000000) return terbilang(Math.floor(nilai / 1000000000)) + " milyar " + terbilang(nilai % 1000000000);
+                                            if (nilai < 1000000000000000) return terbilang(Math.floor(nilai / 1000000000000)) + " triliun " + terbilang(nilai % 1000000000000);
+                                            return "";
+                                        }
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const input = document.getElementById('total_budget');
+                                            const text = document.getElementById('total_budget_text');
+                                            if(input && text) {
+                                                input.addEventListener('input', function() {
+                                                    let angka = this.value;
+                                                    let terbilangText = terbilang(angka);
+                                                    text.textContent = terbilangText ? (terbilangText.trim() + ' rupiah') : '';
+                                                });
+                                                if(input.value) text.textContent = terbilang(input.value).trim() + ' rupiah';
+                                            }
+                                        });
+                                        </script>
                                         @error('total_budget')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

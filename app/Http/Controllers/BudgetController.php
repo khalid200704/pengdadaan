@@ -8,14 +8,12 @@ use Illuminate\Support\Facades\Validator;
 
 class BudgetController extends Controller
 {
-
-
     public function index()
     {
         if (!auth()->user()->canManageBudget()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $budgets = Budget::orderBy('tahun', 'desc')
             ->orderBy('nama_budget', 'asc')
             ->paginate(10);
@@ -27,7 +25,7 @@ class BudgetController extends Controller
         if (!auth()->user()->canManageBudget()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         return view('budgets.create');
     }
 
@@ -36,7 +34,7 @@ class BudgetController extends Controller
         if (!auth()->user()->canManageBudget()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $validator = Validator::make($request->all(), [
             'nama_budget' => 'required|string|max:255',
             'total_budget' => 'required|numeric|min:0',
@@ -67,7 +65,7 @@ class BudgetController extends Controller
         if (!auth()->user()->canManageBudget()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         return view('budgets.show', compact('budget'));
     }
 
@@ -76,7 +74,7 @@ class BudgetController extends Controller
         if (!auth()->user()->canManageBudget()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         return view('budgets.edit', compact('budget'));
     }
 
@@ -85,7 +83,7 @@ class BudgetController extends Controller
         if (!auth()->user()->canManageBudget()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $validator = Validator::make($request->all(), [
             'nama_budget' => 'required|string|max:255',
             'total_budget' => 'required|numeric|min:0',
@@ -116,10 +114,10 @@ class BudgetController extends Controller
         if (!auth()->user()->canManageBudget()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $budget->delete();
 
         return redirect()->route('budgets.index')
             ->with('success', 'Budget berhasil dihapus');
     }
-} 
+}

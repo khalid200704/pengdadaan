@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('judul_permintaan');
             $table->text('deskripsi');
-            $table->decimal('total_estimasi', 15, 2);
+            $table->decimal('total_estimasi', 20, 2);
             $table->enum('status', ['menunggu_persetujuan', 'disetujui', 'ditolak'])->default('menunggu_persetujuan');
             $table->text('keterangan')->nullable();
             $table->text('catatan_approver')->nullable();

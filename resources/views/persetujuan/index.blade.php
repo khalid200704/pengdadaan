@@ -21,8 +21,8 @@
         <div class="col-12 col-md-12 bg-light min-vh-100">
             <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
                 <div>
-                    <h5 class="fw-bold mb-1" style="font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif; color: #222;">Daftar Permintaan Menunggu Persetujuan</h5>
-                    <span class="text-muted" style="font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;">Permintaan yang memerlukan persetujuan</span>
+                    <h5 class="fw-bold mb-1">Daftar Permintaan Menunggu Persetujuan</h5>
+                    <span class="text-muted">Permintaan yang memerlukan persetujuan</span>
                 </div>
             </div>
             <div class="container-fluid mt-4">
@@ -32,16 +32,14 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
-
                 @if(session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{ session('error') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
-
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover align-middle">
                         <thead class="table-light">
                             <tr>
                                 <th>No. Permintaan</th>
@@ -60,11 +58,11 @@
                                 <td>{{ $permintaan->judul_permintaan }}</td>
                                 <td>{{ $permintaan->user->nama ?? '-' }}</td>
                                 <td>{{ $permintaan->user->divisi ?? '-' }}</td>
-                                <td>{{ $permintaan->tanggal_permintaan ? $permintaan->tanggal_permintaan->format('d/m/Y') : '-' }}</td>
-                                <td>Rp {{ number_format($permintaan->total_estimasi, 0, ',', '.') }}</td>
+                                <td><span class="badge bg-secondary">{{ $permintaan->tanggal_permintaan ? $permintaan->tanggal_permintaan->format('d/m/Y') : '-' }}</span></td>
+                                <td class="fw-bold text-success">Rp {{ number_format($permintaan->total_estimasi, 0, ',', '.') }}</td>
                                 <td>
-                                    <a href="{{ route('permintaan.show', $permintaan) }}" class="btn btn-info btn-sm">Detail</a>
-                                    <a href="{{ route('persetujuan.create') }}?permintaan_id={{ $permintaan->id }}" class="btn btn-success btn-sm">Setujui/Tolak</a>
+                                    <a href="{{ route('permintaan.show', $permintaan) }}" class="btn btn-sm btn-info" title="Detail"><i class="bi bi-eye"></i></a>
+                                    <a href="{{ route('persetujuan.create') }}?permintaan_id={{ $permintaan->id }}" class="btn btn-sm btn-success" title="Setujui/Tolak"><i class="bi bi-check2-circle"></i></a>
                                 </td>
                             </tr>
                             @empty
@@ -75,7 +73,6 @@
                         </tbody>
                     </table>
                 </div>
-                
                 <div class="d-flex justify-content-center">
                     {{ $permintaans->links() }}
                 </div>
