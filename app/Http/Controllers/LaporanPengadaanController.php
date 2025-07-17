@@ -44,8 +44,6 @@ class LaporanPengadaanController extends Controller
             ->limit(10)
             ->get();
 
-
-
         // Data persetujuan
         $persetujuans = Persetujuan::with(['permintaan.user', 'disetujuiOleh'])
             ->whereYear('tanggal', $tahun)
@@ -76,13 +74,8 @@ class LaporanPengadaanController extends Controller
 
     public function show($id)
     {
-        // Ambil data persetujuan beserta relasi permintaan, user, diterimaOleh, dan progress updates
-        $laporanPengadaan = \App\Models\Persetujuan::with([
-            'permintaan.user',
-            'permintaan.progressUpdates.user',
-            'disetujuiOleh',
-        ])->findOrFail($id);
-        return view('laporan-pengadaan.show', compact('laporanPengadaan'));
+        // Logic untuk menampilkan laporan detail
+        return view('laporan-pengadaan.show');
     }
 
     public function edit($id)
@@ -102,4 +95,4 @@ class LaporanPengadaanController extends Controller
         // Logic untuk hapus laporan
         return redirect()->route('laporan-pengadaan.index')->with('success', 'Laporan berhasil dihapus');
     }
-} 
+}

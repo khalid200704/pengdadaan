@@ -22,10 +22,8 @@ class PermintaanController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
         }
-        
         return view('permintaan.index', compact('permintaans'));
     }
-
     public function create()
     {
         return view('permintaan.create');
@@ -42,12 +40,12 @@ class PermintaanController extends Controller
 
         $tahun = date('Y');
         $userDivisi = auth()->user()->divisi;
-        
+
         // Cek budget divisi user
         $budget = \App\Models\Budget::where('tahun', $tahun)
             ->where('nama_budget', 'like', '%' . $userDivisi . '%')
             ->first();
-            
+
         if (!$budget || $budget->tersisa < $request->total_estimasi) {
             return redirect()->back()->withInput()->withErrors(['total_estimasi' => 'Budget tidak mencukupi untuk permintaan ini.']);
         }
@@ -120,6 +118,21 @@ class PermintaanController extends Controller
         return redirect()->route('permintaan.index')->with('success', 'Permintaan berhasil diperbarui');
     }
 
+    public function destroy(Permintaan $permintaan)
+    {
+        // Cek apakah user adalah pemilik permintaan atau admin/division head
+        if ($permintaan->user_id !== auth()->id() && !auth()->user()->canManageBudget()) {
+            return redirect()->route('permintaan.index')->with('error', 'Anda tidak memiliki akses untuk menghapus permintaan ini');
+        }
+
+        if ($permintaan->status !== 'menunggu_persetujuan') {
+            return redirect()->route('permintaan.index')->with('error', 'Permintaan tidak dapat dihapus');
+        }
+
+        $permintaan->delete();
+        return redirect()->route('permintaan.index')->with('success', 'Permintaan berhasil dihapus');
+    }
+
     public function addProgressUpdate(Request $request, Permintaan $permintaan)
     {
         // Hanya user yang membuat permintaan & status sudah disetujui
@@ -172,19 +185,4 @@ class PermintaanController extends Controller
 
         return redirect()->back()->with('success', 'Permintaan telah diselesaikan!');
     }
-
-    public function destroy(Permintaan $permintaan)
-    {
-        // Cek apakah user adalah pemilik permintaan atau admin/division head
-        if ($permintaan->user_id !== auth()->id() && !auth()->user()->canManageBudget()) {
-            return redirect()->route('permintaan.index')->with('error', 'Anda tidak memiliki akses untuk menghapus permintaan ini');
-        }
-
-        if ($permintaan->status !== 'menunggu_persetujuan') {
-            return redirect()->route('permintaan.index')->with('error', 'Permintaan tidak dapat dihapus');
-        }
-
-        $permintaan->delete();
-        return redirect()->route('permintaan.index')->with('success', 'Permintaan berhasil dihapus');
-    }
-} 
+}

@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="total_estimasi" class="form-label">Total Estimasi (Rp) *</label>
-                                        <input type="number" name="total_estimasi" id="total_estimasi" class="form-control" value="{{ old('total_estimasi') }}" min="0" max="1000000000000000" step="0.01" required>
+                                        <input type="number" name="total_estimasi" id="total_estimasi" class="form-control" value="{{ old('total_estimasi') }}" min="0" step="0.01" required>
                                         <small id="total_estimasi_text" class="text-muted"></small>
                                         <script>
                                         function formatRupiah(angka) {
@@ -65,7 +65,6 @@
                                             if (nilai < 1000000000) return terbilang(Math.floor(nilai / 1000000)) + " juta " + terbilang(nilai % 1000000);
                                             if (nilai < 1000000000000) return terbilang(Math.floor(nilai / 1000000000)) + " milyar " + terbilang(nilai % 1000000000);
                                             if (nilai < 1000000000000000) return terbilang(Math.floor(nilai / 1000000000000)) + " triliun " + terbilang(nilai % 1000000000000);
-                                            if (nilai < 1000000000000000000) return terbilang(Math.floor(nilai / 1000000000000000)) + " kuadriliun " + terbilang(nilai % 1000000000000000);
                                             return "";
                                         }
                                         document.addEventListener('DOMContentLoaded', function() {
